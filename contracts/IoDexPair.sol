@@ -44,7 +44,7 @@ contract IoDexPair is IoDexERC20 {
 
     uint256 private unlocked = 1;
     modifier lock() {
-        require(unlocked == 1, "IoDexBeam: LOCKED");
+        require(unlocked == 1, "IoDex: LOCKED");
         unlocked = 0;
         _;
         unlocked = 1;
@@ -74,7 +74,7 @@ contract IoDexPair is IoDexERC20 {
         );
         require(
             success && (data.length == 0 || abi.decode(data, (bool))),
-            "IoDexBeam: TRANSFER_FAILED"
+            "IoDex: TRANSFER_FAILED"
         );
     }
 
@@ -101,7 +101,7 @@ contract IoDexPair is IoDexERC20 {
 
     // called once by the factory at time of deployment
     function initialize(address _token0, address _token1) external {
-        require(msg.sender == factory, "IoDexBeam: FORBIDDEN"); // sufficient check
+        require(msg.sender == factory, "IoDex: FORBIDDEN"); // sufficient check
         token0 = _token0;
         token1 = _token1;
     }
@@ -115,7 +115,7 @@ contract IoDexPair is IoDexERC20 {
     ) private {
         require(
             balance0 <= uint112(-1) && balance1 <= uint112(-1),
-            "IoDexBeam: OVERFLOW"
+            "IoDex: OVERFLOW"
         );
         uint32 blockTimestamp = uint32(block.timestamp % 2**32);
         uint32 timeElapsed = blockTimestamp - blockTimestampLast; // overflow is desired
@@ -189,7 +189,7 @@ contract IoDexPair is IoDexERC20 {
                 amount1.mul(_totalSupply) / _reserve1
             );
         }
-        require(liquidity > 0, "IoDexBeam: INSUFFICIENT_LIQUIDITY_MINTED");
+        require(liquidity > 0, "IoDex: INSUFFICIENT_LIQUIDITY_MINTED");
         _mint(to, liquidity);
 
         _update(balance0, balance1, _reserve0, _reserve1);
@@ -216,7 +216,7 @@ contract IoDexPair is IoDexERC20 {
         amount1 = liquidity.mul(balance1) / _totalSupply; // using balances ensures pro-rata distribution
         require(
             amount0 > 0 && amount1 > 0,
-            "IoDexBeam: INSUFFICIENT_LIQUIDITY_BURNED"
+            "IoDex: INSUFFICIENT_LIQUIDITY_BURNED"
         );
         _burn(address(this), liquidity);
         _safeTransfer(_token0, to, amount0);
@@ -238,20 +238,20 @@ contract IoDexPair is IoDexERC20 {
     ) external lock {
         require(
             amount0Out > 0 || amount1Out > 0,
-            "IoDexBeam: INSUFFICIENT_OUTPUT_AMOUNT"
+            "IoDex: INSUFFICIENT_OUTPUT_AMOUNT"
         );
         SwapVariables memory vars = SwapVariables(0, 0, 0, 0, 0, 0);
         (vars._reserve0, vars._reserve1, ) = getReserves(); // gas savings
         require(
             amount0Out < vars._reserve0 && amount1Out < vars._reserve1,
-            "IoDexBeam: INSUFFICIENT_LIQUIDITY"
+            "IoDex: INSUFFICIENT_LIQUIDITY"
         );
 
         {
             // scope for _token{0,1}, avoids stack too deep errors
             address _token0 = token0;
             address _token1 = token1;
-            require(to != _token0 && to != _token1, "IoDexBeam: INVALID_TO");
+            require(to != _token0 && to != _token1, "IoDex: INVALID_TO");
             if (amount0Out > 0) _safeTransfer(_token0, to, amount0Out); // optimistically transfer tokens
             if (amount1Out > 0) _safeTransfer(_token1, to, amount1Out); // optimistically transfer tokens
             if (data.length > 0)
@@ -272,7 +272,7 @@ contract IoDexPair is IoDexERC20 {
             : 0;
         require(
             vars.amount0In > 0 || vars.amount1In > 0,
-            "IoDexBeam: INSUFFICIENT_INPUT_AMOUNT"
+            "IoDex: INSUFFICIENT_INPUT_AMOUNT"
         );
         {
             // scope for reserve{0,1} - Adjusted, avoids stack too deep errors
@@ -285,7 +285,7 @@ contract IoDexPair is IoDexERC20 {
             require(
                 balance0Adjusted.mul(balance1Adjusted) >=
                     uint256(vars._reserve0).mul(vars._reserve1).mul(10000**2),
-                "IoDexBeam: K"
+                "IoDex: K"
             );
         }
 

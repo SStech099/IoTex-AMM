@@ -35,14 +35,14 @@ contract IoDexFactory is IIoDexFactory {
         override
         returns (address pair)
     {
-        require(tokenA != tokenB, "IoDexBeam: IDENTICAL_ADDRESSES");
+        require(tokenA != tokenB, "IoDex: IDENTICAL_ADDRESSES");
         (address token0, address token1) = tokenA < tokenB
             ? (tokenA, tokenB)
             : (tokenB, tokenA);
-        require(token0 != address(0), "IoDexBeam: ZERO_ADDRESS");
+        require(token0 != address(0), "IoDex: ZERO_ADDRESS");
         require(
             getPair[token0][token1] == address(0),
-            "IoDexBeam: PAIR_EXISTS"
+            "IoDex: PAIR_EXISTS"
         ); // single check is sufficient
         bytes memory bytecode = type(IoDexPair).creationCode;
         bytes32 salt = keccak256(abi.encodePacked(token0, token1));
@@ -57,17 +57,17 @@ contract IoDexFactory is IIoDexFactory {
     }
 
     function setFeeTo(address _feeTo) external override {
-        require(msg.sender == feeToSetter, "IoDexBeam: FORBIDDEN");
+        require(msg.sender == feeToSetter, "IoDex: FORBIDDEN");
         feeTo = _feeTo;
     }
 
     function setMigrator(address _migrator) external override {
-        require(msg.sender == feeToSetter, "IoDexBeam: FORBIDDEN");
+        require(msg.sender == feeToSetter, "IoDex: FORBIDDEN");
         migrator = _migrator;
     }
 
     function setFeeToSetter(address _feeToSetter) external override {
-        require(msg.sender == feeToSetter, "IoDexBeam: FORBIDDEN");
+        require(msg.sender == feeToSetter, "IoDex: FORBIDDEN");
         feeToSetter = _feeToSetter;
     }
 }

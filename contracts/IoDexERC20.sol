@@ -6,7 +6,7 @@ import "./libraries/SafeMath.sol";
 contract IoDexERC20 {
     using SafeMathIoDex for uint256;
 
-    string public constant name = "IoDexBeam LP Token";
+    string public constant name = "IoDex LP Token";
     string public constant symbol = "SLP";
     uint8 public constant decimals = 18;
     uint256 public totalSupply;
@@ -116,7 +116,7 @@ contract IoDexERC20 {
         bytes32 r,
         bytes32 s
     ) external {
-        require(deadline >= block.timestamp, "IoDexBeam: EXPIRED");
+        require(deadline >= block.timestamp, "IoDex: EXPIRED");
         bytes32 digest = keccak256(
             abi.encodePacked(
                 "\x19\x01",
@@ -136,7 +136,7 @@ contract IoDexERC20 {
         address recoveredAddress = ecrecover(digest, v, r, s);
         require(
             recoveredAddress != address(0) && recoveredAddress == owner,
-            "IoDexBeam: INVALID_SIGNATURE"
+            "IoDex: INVALID_SIGNATURE"
         );
         _approve(owner, spender, value);
     }
